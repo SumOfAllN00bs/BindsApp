@@ -8,6 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+//ToDo: Optimize scrolling and control recycling
+//ToDo: Keyboard Shortcuts
+//ToDo: Minimize to tray
 
 namespace BindsApp
 {
@@ -26,27 +29,24 @@ namespace BindsApp
             string fullPath = Path.Combine(path, fileName);
             using (StreamReader fileStream = new StreamReader(fullPath))
             {
-                sc_BindsList.Panel2.Controls.Clear();
-                int top = 5;
-                int left = 5;
+                flp_Buttons.Controls.Clear();
                 int controls = 0;
                 while (!fileStream.EndOfStream)
                 {
                     Button tmpButton = new Button();
+                    tmpButton.AutoSize = true;
                     string tmpText = fileStream.ReadLine();
                     tmpButton.Text = tmpText;
-                    tmpButton.Click += (o, e) => { PutTextIntoClipboard(tmpText); };
-                    tmpButton.Top = top + ((controls / 3) * tmpButton.Height);
-                    tmpButton.Left = left + ((controls % 3) * 100);
                     controls++;
-                    sc_BindsList.Panel2.Controls.Add(tmpButton);
+                    tmpButton.Click += (o, e) => { PutTextIntoClipboard(tmpText,tmpButton.Width); };
+                    flp_Buttons.Controls.Add(tmpButton);
                 }
             }
-
         }
-        public void PutTextIntoClipboard(string s)
+        public void PutTextIntoClipboard(string s, int width)
         {
             Clipboard.SetDataObject(s);
+            MessageBox.Show(width.ToString());
         }
         private void btn_Refresh_Click(object sender, EventArgs e)
         {
